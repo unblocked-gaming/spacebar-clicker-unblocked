@@ -56,6 +56,42 @@
             animation: floatUp 0.5s ease-out forwards;
         }
 
+        .spacebar {
+            width: 200px;
+            height: 40px;
+            background-color: #333;
+            border-radius: 5px;
+            margin: 20px auto;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .spacebar.pressed {
+            transform: translateY(4px);
+            background-color: #555;
+        }
+
+        .spacebar::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #222;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        .spacebar-text {
+            color: white;
+            line-height: 40px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
         @keyframes floatUp {
             0% {
                 opacity: 1;
@@ -78,6 +114,9 @@
     <div class="game-container">
         <div class="instruction">Press SPACEBAR to score!</div>
         <div class="score">0</div>
+        <div class="spacebar">
+            <div class="spacebar-text">SPACE</div>
+        </div>
         <button onclick="resetGame()">Restart</button>
         <div class="high-score">High Score: 0</div>
     </div>
@@ -87,14 +126,41 @@
         let highScore = 0;
         const scoreElement = document.querySelector('.score');
         const highScoreElement = document.querySelector('.high-score');
+        const spacebarElement = document.querySelector('.spacebar');
 
         document.addEventListener('keydown', (event) => {
             if (event.code === 'Space') {
                 event.preventDefault();
+                spacebarPressed();
                 incrementScore();
                 createClickEffect();
             }
         });
+
+        document.addEventListener('keyup', (event) => {
+            if (event.code === 'Space') {
+                spacebarReleased();
+            }
+        });
+
+        // Also handle mouse/touch interactions
+        spacebarElement.addEventListener('mousedown', () => {
+            spacebarPressed();
+            incrementScore();
+            createClickEffect();
+        });
+
+        spacebarElement.addEventListener('mouseup', () => {
+            spacebarReleased();
+        });
+
+        function spacebarPressed() {
+            spacebarElement.classList.add('pressed');
+        }
+
+        function spacebarReleased() {
+            spacebarElement.classList.remove('pressed');
+        }
 
         function incrementScore() {
             score++;
